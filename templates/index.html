@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pneumonia Detection</title>
+    <style>
+        body {
+            background-image: url('public/images/background.png');
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+            overflow-y: scroll;
+            position: relative; /* Required for positioning the heading */
+        }
+        .heading {
+            position:fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: antiquewhite;
+            font-size: 4em; /* Adjust as needed */
+            font-weight: bolder;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); /* Optional for better readability */
+            margin: 0;
+        }
+        .upload-form, .result-container {
+            position: fixed;
+            left: 200px;
+            background-color: rgba(1, 1, 1, 1); /* Changed opacity for better readability */
+            padding: 40px;
+            width: fit-content;
+            color: antiquewhite;
+            font-weight: bolder;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            border-radius: 15px; /* Adjusted border-radius for a more modern look */
+            box-shadow: 0px 0px 10px rgba(41, 40, 40, 0.5);
+        }
+        .upload-form {
+            top: 170px;
+        }
+        .result-container {
+            top: 340px; /* Adjusted to position it below the upload form */
+        }
+        .upload-form label, .result-container h2 {
+            display: block;
+            margin-bottom: 10px;
+        }
+        .upload-form input[type="file"] {
+            background-color: #333;
+            color: #fff;
+            border: 2px solid #444;
+            border-radius: 5px;
+            padding: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            display: inline-block;
+            width: 100%;
+        }
+        .upload-form input[type="file"]::-webkit-file-upload-button {
+            background: #444;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .upload-form input[type="submit"] {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 15px 30px;
+            cursor: pointer;
+            margin-top: 30px;
+            font-size: 16px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        .upload-form input[type="submit"]:hover {
+            background-color: #629ad7;
+        }
+        .result-container {
+            background-color: rgba(1, 1, 1, 0.9); /* Slightly less opaque for contrast */
+            padding: 20px;
+            top: 500px;
+            width: 480px;
+            border-radius: 15px;
+            box-shadow: 0px 0px 10px rgba(41, 40, 40, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="heading">PNEUMONIA DETECTOR</div>
+    <div class="upload-form">
+        <h2>Upload Chest X-ray</h2>
+        <form id="uploadForm">
+            <label for="image">Choose an image (PNG or JPEG)</label>
+            <input type="file" id="image" name="image" accept="image/png, image/jpeg" required>
+            <input type="submit" value="submit">
+        </form>        
+    </div>
+    <div class="result-container">
+        <h2>Result</h2>
+        <p>Your result will be displayed here.</p>
+    </div>
+    <div style="height: 2000px;"></div>
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+            const resultContainer = document.querySelector('.result-container p');
+    
+            resultContainer.innerText = 'Processing...';
+    
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    body: formData
+                });
+    
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+    
+                const result = await response.json();
+                if (result.error) {
+                    throw new Error(result.error);
+                }
+                resultContainer.innerText = result.result;
+            } catch (error) {
+                console.error('Error:', error);
+                resultContainer.innerText = `Error: ${error.message}`;
+            }
+        });
+    </script>
+
+    <!-- Chatbot integration -->
+    <script>
+        const urbanChatbotId = "0392e91d-4a5f-49dd-8e97-31e1f8401817"
+    </script>
+    
+    <script src="https://urbanchat.ai/integration/chatbot-integration.js"></script>
+</body>
+</html>

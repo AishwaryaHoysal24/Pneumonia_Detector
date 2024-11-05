@@ -1,0 +1,9 @@
+Flask
+tensorflow
+Pillow
+requests
+numpy
+setuptools
+wheel
+gunicorn
+google-cloud-storage==2.1.0
